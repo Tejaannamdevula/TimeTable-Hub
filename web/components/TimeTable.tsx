@@ -1,52 +1,52 @@
-"use client";
+// "use client";
 
-type TimeTableData = {
-  section: Section;
-  instructors: Instructor[];
-  days: Day[];
-  timeslots: TimeSlots;
-};
+// type TimeTableData = {
+//   section: Section;
+//   instructors: Instructor[];
+//   days: Day[];
+//   timeslots: TimeSlots;
+// };
 
-type TimeTableProps = {
-  data: TimeTableData;
-};
+// type TimeTableProps = {
+//   data: TimeTableData;
+// };
 
-type Section = {
-  secName: string;
-  roomNo: number | string;
-};
-type Instructor = {
-  name: string;
-  subject: string;
-};
+// type Section = {
+//   secName: string;
+//   roomNo: number | string;
+// };
+// type Instructor = {
+//   name: string;
+//   subject: string;
+// };
 
-type TimeSlots = Slots[];
+// type TimeSlots = Slots[];
 
-type Slots = {
-  startTime: string;
-  endTime: string;
-};
+// type Slots = {
+//   startTime: string;
+//   endTime: string;
+// };
 
-enum DayName {
-  MON = "MON",
-  TUE = "TUE",
-  WED = "WED",
-  THU = "THU",
-  FRI = "FRI",
-  SAT = "SAT",
-}
-type Day = {
-  dayName: DayName;
-  periods: (Period | null)[];
-};
+// enum DayName {
+//   MON = "MON",
+//   TUE = "TUE",
+//   WED = "WED",
+//   THU = "THU",
+//   FRI = "FRI",
+//   SAT = "SAT",
+// }
+// type Day = {
+//   dayName: DayName;
+//   periods: (Period | null)[];
+// };
 
-type Period = {
-  subject: string;
-  specialRoom?: string;
-  isLab: boolean;
-  isBreak: boolean;
-};
-
+// type Period = {
+//   subject: string;
+//   specialRoom?: string;
+//   isLab?: boolean;
+//   isBreak?: boolean;
+// };
+import * as TimeTableTypes from "@/types/timeTable";
 import {
   Table,
   TableBody,
@@ -61,7 +61,7 @@ const SlotFunction = ({
   data,
   periodNo,
 }: {
-  data: Slots;
+  data: TimeTableTypes.Slots;
   periodNo: number;
 }): JSX.Element => {
   return (
@@ -74,7 +74,11 @@ const SlotFunction = ({
   );
 };
 
-const DayClassFunction = ({ data }: { data: Day }): JSX.Element => {
+const DayClassFunction = ({
+  data,
+}: {
+  data: TimeTableTypes.Day;
+}): JSX.Element => {
   return (
     <>
       <TableCell>{data.dayName}</TableCell>
@@ -84,7 +88,11 @@ const DayClassFunction = ({ data }: { data: Day }): JSX.Element => {
     </>
   );
 };
-const InstructorFunction = ({ data }: { data: Instructor }): JSX.Element => {
+const InstructorFunction = ({
+  data,
+}: {
+  data: TimeTableTypes.Instructor;
+}): JSX.Element => {
   return (
     <TableRow>
       <TableCell className=" text-center">{data.name}</TableCell>
@@ -92,7 +100,9 @@ const InstructorFunction = ({ data }: { data: Instructor }): JSX.Element => {
     </TableRow>
   );
 };
-export function TimeTable({ data }: TimeTableProps): JSX.Element {
+export function TimeTable({
+  data,
+}: TimeTableTypes.TimeTableProps): JSX.Element {
   return (
     <div>
       <div className="flex w-full  justify-center items-center mb-4 space-x-5 ">
