@@ -3,6 +3,7 @@ import Image from "next/image";
 
 import { TimeTable } from "@/components/TimeTable";
 import { start } from "repl";
+import { TimeTable2 } from "@/components/Timetable2";
 export enum DayName {
   MON = "MON",
   TUE = "TUE",
@@ -179,6 +180,7 @@ export default function Home() {
       <div className="flex  flex-col items-center justify-around  space-y-4">
         <Button>TimeTable App</Button>
         <TimeTable data={data}></TimeTable>
+        <TimeTable2 data={data}></TimeTable2>
       </div>
     </main>
   );

@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { TimeTable2 } from "@/components/Timetable2";
 import * as TimeTableTypes from "@/types/timeTable";
 import { TimeTable } from "@/components/TimeTable";
 const URL: string = process.env.NEXT_PUBLIC_TIMETABLE_URL || "default_url";
@@ -99,6 +99,7 @@ const Page = async () => {
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="flex  flex-col items-center justify-around  space-y-4">
           <TimeTable data={arr}></TimeTable>
+          <TimeTable2 data={arr}></TimeTable2>
         </div>
       </main>
     );
