@@ -12,12 +12,22 @@ import {
 import { TimeTable2 } from "@/components/Timetable2";
 import * as TimeTableTypes from "@/types/timeTable";
 import { TimeTable } from "@/components/TimeTable";
+import { TimeTable3 } from "@/components/TimeTable3";
 const URL: string = process.env.NEXT_PUBLIC_TIMETABLE_URL || "default_url";
 
 const cleanData = (data: any): TimeTableTypes.TimeTableData => {
   if (data.length == 0) {
     throw new Error("Data is Empty");
   }
+  const N = data.length;
+  // console.log("N", N);
+  // console.log("data", data[N - 1]);
+
+  const filterBreak = data[N - 1].filter(
+    (i: any) => i != undefined && i != null
+  );
+  const breakTimings: TimeTableTypes.BreakTimings[] = filterBreak[1].split(",");
+  console.log("break", breakTimings);
   const [secName, roomNo] = data[0][0].split("-");
   const section: TimeTableTypes.Section = {
     secName: secName,
@@ -44,6 +54,8 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
     for (let i = 1; i < day.length; i++) {
       if (day[i]) {
         periods.push({ subject: day[i] });
+      } else if (breakTimings.includes(data[1][i]) && i < N - 1) {
+        periods.push({ subject: "BREAK" });
       } else {
         periods.push({ subject: "empty" });
       }
@@ -55,7 +67,7 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
   });
 
   const instructors: TimeTableTypes.Instructor[] = data
-    .slice(8)
+    .slice(8, N - 1)
     .map((item: any) => {
       console.log("hi");
       console.log("ddddd", item);
@@ -77,8 +89,8 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
 };
 const Page = async () => {
   const fetchExcelData = async (URL: string) => {
-    const response = await fetch(URL);
-    // const response = await fetch(URL, { cache: "no-store" });
+    // const response = await fetch(URL);
+    const response = await fetch(URL, { cache: "no-store" });
     const data = await response.arrayBuffer();
     return data;
   };
@@ -98,8 +110,9 @@ const Page = async () => {
     return (
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="flex  flex-col items-center justify-around  space-y-4">
-          <TimeTable data={arr}></TimeTable>
+          {/* <TimeTable data={arr}></TimeTable> */}
           <TimeTable2 data={arr}></TimeTable2>
+          <TimeTable3 data={arr}></TimeTable3>
         </div>
       </main>
     );
