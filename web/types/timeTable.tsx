@@ -5,6 +5,7 @@ export type TimeTableData = {
   instructors: Instructor[];
   days: Day[];
   timeslots: TimeSlots;
+  break?: BreakTimings;
 };
 
 export type TimeTableProps = {
@@ -44,4 +45,8 @@ export type Day = {
 
 export type Period = {
   subject: string;
+};
+
+export type BreakTimings = {
+  time: string[];
 };
