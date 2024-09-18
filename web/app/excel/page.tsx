@@ -20,44 +20,66 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
     throw new Error("Data is Empty");
   }
   const N = data.length;
-  // console.log("N", N);
-  // console.log("data", data[N - 1]);
-
   const filterBreak = data[N - 1].filter(
-    (i: any) => i != undefined && i != null
+    (i: any) => i != null && typeof i == "string"
   );
-  const breakTimings: TimeTableTypes.BreakTimings[] = filterBreak[1].split(",");
+  const breakTimings: TimeTableTypes.BreakTimings[] = filterBreak[1]
+    .split(",")
+    .map((i: any) => i.trim());
+
   console.log("break", breakTimings);
+
   const [secName, roomNo] = data[0][0].split("-");
   const section: TimeTableTypes.Section = {
     secName: secName,
     roomNo: roomNo,
   };
-  const timeslots: TimeTableTypes.TimeSlots = [];
+  // const timeslots: TimeTableTypes.TimeSlots = [];
 
-  for (let i = 0; i < data[1].length; i++) {
-    let item = data[1][i];
-    if (item) {
-      let [startTime, endTime] = item.split("-");
-      timeslots.push({
+  // for (let i = 0; i < data[1].length; i++) {
+  // let item = data[1][i];
+  // if (item) {
+  // let [startTime, endTime] = item.split("-");
+  // timeslots.push({
+  // startTime: startTime,
+  // endTime: endTime,
+  // });
+  // }
+  // }
+  const filterTimeSlots = data[1].slice(1).filter((slot: any) => slot != null);
+  const totalPeriods = filterTimeSlots.length;
+  const timeslots: TimeTableTypes.TimeSlots = filterTimeSlots.map(
+    (time: string) => {
+      let [startTime, endTime] = time.trim().split("-");
+      return {
         startTime: startTime,
         endTime: endTime,
-      });
+      };
     }
-  }
+  );
 
   const days: TimeTableTypes.Day[] = data.slice(2, 8).map((day: any) => {
     let dayName = day[0];
     const periods: TimeTableTypes.Period[] = [];
 
     // For handling sparse arrays
-    for (let i = 1; i < day.length; i++) {
+    let length: number = 0;
+    for (let i = 1; i <= totalPeriods; i++) {
+      // console.log(`period ${i} ${data[1][i]} ${day[i]} `);
       if (day[i]) {
         periods.push({ subject: day[i] });
-      } else if (breakTimings.includes(data[1][i]) && i < N - 1) {
+        length += 1;
+      } else if (breakTimings.includes(data[1][i].trim()) && i < N - 1) {
         periods.push({ subject: "BREAK" });
+        length += 1;
+      } else if (periods[length - 1].subject != "BREAK") {
+        // console.log("periods", i, periods[length - 1].subject);
+        periods.push({ subject: periods[length - 1].subject });
+        length += 1;
       } else {
+        console.log("emptyytytytyty");
         periods.push({ subject: "empty" });
+        length += 1;
       }
     }
     return {
@@ -69,8 +91,6 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
   const instructors: TimeTableTypes.Instructor[] = data
     .slice(8, N - 1)
     .map((item: any) => {
-      console.log("hi");
-      console.log("ddddd", item);
       const filterItem = item.filter((i: any) => i != undefined && i != null);
       let [subject, name] = filterItem;
       return {
@@ -78,7 +98,7 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
         subject,
       };
     });
-  console.log("instructors", instructors);
+  // console.log("instructors", instructors);
   let TimeTableData: TimeTableTypes.TimeTableData = {
     section: section,
     instructors: instructors,
@@ -105,7 +125,7 @@ const Page = async () => {
     console.log("Json", jsonData);
     let arr: TimeTableTypes.TimeTableData = cleanData(jsonData);
     // console.log(arr);
-    console.log(arr.section.secName);
+    // console.log(arr.section.secName);
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
