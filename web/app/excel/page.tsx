@@ -13,6 +13,7 @@ import { TimeTable2 } from "@/components/Timetable2";
 import * as TimeTableTypes from "@/types/timeTable";
 import { TimeTable } from "@/components/TimeTable";
 import { TimeTable3 } from "@/components/TimeTable3";
+import { time } from "console";
 const URL: string = process.env.NEXT_PUBLIC_TIMETABLE_URL || "default_url";
 
 const cleanData = (data: any): TimeTableTypes.TimeTableData => {
@@ -23,7 +24,7 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
   const filterBreak = data[N - 1].filter(
     (i: any) => i != null && typeof i == "string"
   );
-  const breakTimings: TimeTableTypes.BreakTimings[] = filterBreak[1]
+  const breakTimings: string[] = filterBreak[1]
     .split(",")
     .map((i: any) => i.trim());
 
@@ -48,12 +49,20 @@ const cleanData = (data: any): TimeTableTypes.TimeTableData => {
   // }
   const filterTimeSlots = data[1].slice(1).filter((slot: any) => slot != null);
   const totalPeriods = filterTimeSlots.length;
+  let periodNo = 0;
   const timeslots: TimeTableTypes.TimeSlots = filterTimeSlots.map(
     (time: string) => {
+      const isBreakTime: boolean = breakTimings.includes(time.trim());
+
+      if (!isBreakTime) {
+        periodNo += 1;
+      }
+
       let [startTime, endTime] = time.trim().split("-");
       return {
         startTime: startTime,
         endTime: endTime,
+        periodNo: isBreakTime ? null : periodNo,
       };
     }
   );
@@ -124,13 +133,13 @@ const Page = async () => {
     const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
     console.log("Json", jsonData);
     let arr: TimeTableTypes.TimeTableData = cleanData(jsonData);
-    // console.log(arr);
+    console.log("arrr", arr);
     // console.log(arr.section.secName);
 
     return (
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         <div className="flex  flex-col items-center justify-around  space-y-4">
-          {/* <TimeTable data={arr}></TimeTable> */}
+          <TimeTable data={arr}></TimeTable>
           <TimeTable2 data={arr}></TimeTable2>
           <TimeTable3 data={arr}></TimeTable3>
         </div>
