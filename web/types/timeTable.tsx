@@ -5,7 +5,7 @@ export type TimeTableData = {
   instructors: Instructor[];
   days: Day[];
   timeslots: TimeSlots;
-  break?: BreakTimings[];
+  break?: string[];
 };
 
 export type TimeTableProps = {
@@ -27,6 +27,7 @@ export type TimeSlots = Slots[];
 export type Slots = {
   startTime: string;
   endTime: string;
+  periodNo: number | null;
 };
 
 export enum DayName {
@@ -45,8 +46,4 @@ export type Day = {
 
 export type Period = {
   subject: string;
-};
-
-export type BreakTimings = {
-  time: string;
 };
